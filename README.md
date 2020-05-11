@@ -42,7 +42,8 @@ const reduce = (reducer, initial, arr) => {
 	return result;
 };
 const filter = (reducer, arr) => reduce(reducer, [], arr);
-const shortest = filter((prev, next) => prev.duration < next.duration, songs); // funckja znajdująca element o najmniejszej wartości w duration
+// funkcja znajdująca element o najmniejszej wartości w duration
+const shortest = filter((prev, next) => prev.duration < next.duration, songs);
 const longest = filter((prev, next) => prev.duration > next.duration, songs);
 ```
 
@@ -151,5 +152,29 @@ const getBusiness = (list) => list.filter(hasProperty("genre", "bussines"));
 const getPages = (list) => list.map(getProperty("pages"));
 const countPages = (book) => book.reduce((acc, pages) => acc + pages);
 
-pipe(getBusiness, getPages, countPages)(books); // pipe is like composition but calls functions in inverted way (first on left)
+pipe(getBusiness, getPages, countPages)(books);
+// pipe is like composition but calls functions in inverted way (first on left)
+```
+
+## Shared State
+
+Is an info that we can access from many places in our app. To avoid many bugs in our programs, we should use:
+
+```javascript
+function app() {
+	const items = ["a", "b", "c"];
+	log(items);
+	// something more
+}
+function log(items) {
+	const arr = [...items]; // shallow
+	// more actions...
+}
+```
+
+Unfortunatelly its is shallow copying, so it won't copy deep functions from prototype 😩.
+So to copy deeply our objects we should implement our own funcitons or use library like Ramda with it's **_R.clone_** function. To make sure that your properties won't be modified use:
+
+```javascript
+Object.freeze(yourObject);
 ```
