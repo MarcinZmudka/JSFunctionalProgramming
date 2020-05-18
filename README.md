@@ -178,3 +178,97 @@ So to copy deeply our objects we should implement our own funcitons or use libra
 ```javascript
 Object.freeze(yourObject);
 ```
+
+## Composition over inheritence
+
+Let's imagine we have 2 classes
+
+```javascript
+class Movie {
+	record() {}
+	share() {}
+	watch() {}
+}
+
+class Podcast {
+	record() {}
+	share() {}
+	listen() {}
+}
+```
+
+As you can see we have similarity between those 2 classes. Let's implement inheritance
+
+```javascript
+class Media {
+	record() {}
+	share() {}
+}
+class Movie extends Media {
+	record() {}
+}
+
+class Podcast extends Media {
+	record() {}
+}
+```
+
+Look great rigth?
+But what when we will add Newsletter which we can also share?
+
+```javascript
+class Newsletter extends Media {
+	write() {}
+	read() {}
+}
+```
+
+As you assume we have a problem because, we cannont record Newsletter. We can resolve it in that way
+
+```javascript
+class Resource {
+	share() {}
+}
+class Newsletter extends Resource {
+	// ... methods
+}
+```
+
+But now we are not DRY. It is so called [_Duplication by necessity_](https://stackoverflow.com/questions/49002/prefer-composition-over-inheritance)
+
+Let's take a look how we can use objects composition ti fight with our problem.
+
+Inheritance focuses on **how our classes look like** instead of **what they can do**
+We have our movie which can:
+
+- record
+- share
+- watch
+
+```javascript
+const recordable = (state) => ({
+	record: () => `I'm recording a new ${state.type}`,
+});
+const shareable = (state) => ({
+	share: () => `I'm sharing a new ${state.name}`,
+});
+const watchable = (state) => ({
+	watch: () => `I'm watching a new ${state.name}`,
+});
+// This is so called factory functions
+const movie = (name) => {
+	const state = { name: name, type: "movie" };
+	return Object.assign(
+		state,
+		recordable(state),
+		shareable(state),
+		watchable(state)
+	);
+};
+
+const latestMovie = movie("Composition vs. Inheritance");
+```
+
+Main idea of this topics is
+
+> I believe in updates, not rewrites.
