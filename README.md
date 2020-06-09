@@ -272,3 +272,21 @@ const latestMovie = movie("Composition vs. Inheritance");
 Main idea of this topics is
 
 > I believe in updates, not rewrites.
+
+## Factory Functions
+
+Factory is an function that return an object. Good praxis is to frooze returned object. Object.freeze offers only short freeze, so if you will put nested objects it will not work for them.
+
+```javascript
+const list = () => {
+	const items = [];
+
+	return Object.freeze({
+		// short freeze
+		addItem: (item) => items.push(item),
+		getItems: () => items,
+	});
+};
+```
+
+Take a note that each object has method, it is not connected to prototype object so it's not well optimized. On the other hand it's not big deal for even 100 objects.
