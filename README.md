@@ -4,9 +4,39 @@ This is my notebook. Feel free to use it
 
 _if you spot bug, let me know_ 📣
 
+## Table of content
+
+- [Functional Programming in JS](#functional-programming-in-js)
+	- [Table of content](#table-of-content)
+	- [Pure Functions](#pure-functions)
+		- [Take a note that functions take argument](#take-a-note-that-functions-take-argument)
+		- [Pure Functios are:](#pure-functios-are)
+	- [High Order Functions](#high-order-functions)
+		- [Definition](#definition)
+		- [Code example](#code-example)
+	- [Function Composition](#function-composition)
+		- [Problem](#problem)
+		- [Solution](#solution)
+	- [Currying](#currying)
+		- [Problem](#problem-1)
+		- [Solution](#solution-1)
+		- [Use Case](#use-case)
+	- [Shared State](#shared-state)
+		- [Definition](#definition-1)
+	- [Composition over inheritence](#composition-over-inheritence)
+		- [Problem](#problem-2)
+		- [Solution](#solution-2)
+	- [Factory Functions](#factory-functions)
+		- [Definition](#definition-2)
+		- [Code example](#code-example-1)
+	- [Functors](#functors)
+		- [Definiton](#definiton)
+		- [Rule 1 - identity](#rule-1---identity)
+		- [Rule 2 - composistion](#rule-2---composistion)
+
 ## Pure Functions
 
-Take a note that functions take argument
+### Take a note that functions take argument
 
 - By value:
   1. Strings, numbers etc..
@@ -14,7 +44,7 @@ Take a note that functions take argument
   1. Arrays
   1. Objects
 
-Pure Functios are:
+### Pure Functios are:
 
 - _Clean_:
 
@@ -30,7 +60,11 @@ Pure Functios are:
 
 ## High Order Functions
 
+### Definition
+
 Those are the functions which take functions and return a new one. Instead of make many function which are similar whe may build function like that:
+
+### Code example 
 
 ```javascript
 const reduce = (reducer, initial, arr) => {
@@ -57,12 +91,16 @@ const shortest = songs.reduce(shortestReducer, songs);
 
 ## Function Composition
 
+### Problem 
+
 Image we would like to add and then double the number
 
 ```javascript
 const double = (y) => y * 2;
 const add = (x) => x + 1;
 ```
+
+### Solution
 
 To ovoid nesting execution of those functions we can create **Function Composition**
 
@@ -83,6 +121,8 @@ If you would like to execute from left to right use .reduce instead.
 
 ## Currying
 
+### Problem
+
 Take a look at that functions:
 
 ```javascript
@@ -90,6 +130,8 @@ const multiply = (x, y) => x * y;
 ```
 
 But what if we would like to use it in map function?
+
+### Solution
 
 1. We can do something like that
    ```javascript
@@ -158,6 +200,8 @@ pipe(getBusiness, getPages, countPages)(books);
 
 ## Shared State
 
+### Definition 
+
 Is an info that we can access from many places in our app. To avoid many bugs in our programs, we should use:
 
 ```javascript
@@ -180,6 +224,8 @@ Object.freeze(yourObject);
 ```
 
 ## Composition over inheritence
+
+### Problem
 
 Let's imagine we have 2 classes
 
@@ -236,6 +282,8 @@ class Newsletter extends Resource {
 
 But now we are not DRY. It is so called [_Duplication by necessity_](https://stackoverflow.com/questions/49002/prefer-composition-over-inheritance)
 
+### Solution 
+
 Let's take a look how we can use objects composition ti fight with our problem.
 
 Inheritance focuses on **how our classes look like** instead of **what they can do**
@@ -275,7 +323,11 @@ Main idea of this topics is
 
 ## Factory Functions
 
+### Definition
+
 Factory is an function that return an object. Good praxis is to frooze returned object. Object.freeze offers only short freeze, so if you will put nested objects it will not work for them.
+
+### Code example 
 
 ```javascript
 const list = () => {
@@ -290,3 +342,36 @@ const list = () => {
 ```
 
 Take a note that each object has method, it is not connected to prototype object so it's not well optimized. On the other hand it's not big deal for even 100 objects.
+
+## Functors
+
+### Definiton
+
+> Object which allow to map his atributes
+> The simplest functor is array
+
+### Rule 1 - identity
+
+Object return by mapping should has the same structure as mapped functor.
+
+### Rule 2 - composistion
+
+We should be able to use interchangeable chaining and composistion
+
+```javascript
+const newTuple = (a,b) => {
+    let tuple = {a: a, b: b}
+    tuple.map = callback => newTuple(callback(tuple.a),callback(tuple.b))
+    return tuple
+}
+
+/* identity */
+const tuple = newTuple(4,3)
+const tupleIdentity = tuple.map( x => x )
+
+/* composistion|chaining */
+const double = x => x*2
+const increase = x => x+1
+const tupleComposedFunctions = tuple.map( x => double(increase(x)) )
+const tupleChainedMaps = tuple.map(increase).map(double)
+```
