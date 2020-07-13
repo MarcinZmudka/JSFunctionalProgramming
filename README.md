@@ -33,6 +33,9 @@ _if you spot bug, let me know_ 📣
 		- [Definiton](#definiton)
 		- [Rule 1 - identity](#rule-1---identity)
 		- [Rule 2 - composistion](#rule-2---composistion)
+	- [Monads](#monads)
+		- [Definition](#definition-3)
+		- [Use Case](#use-case-1)
 
 ## Pure Functions
 
@@ -375,3 +378,55 @@ const increase = x => x+1
 const tupleComposedFunctions = tuple.map( x => double(increase(x)) )
 const tupleChainedMaps = tuple.map(increase).map(double)
 ```
+
+## Monads
+
+### Definition 
+
+It alows to flatmap for some values. Flat map is like map but it flats nested array. So it is an functors which flatmap instead of map.
+
+### Use Case
+
+Let's imagine we are creating Fahrenheit to Celsius converter
+```javascript
+const fahrenheitToCelsius = (a) => (a-32)*0.5556;
+
+const sensor1 = 15;
+const sensor2 = null;
+
+fahrenheitToCelsius(sensor1); /*?*/ - good value
+fahrenheitToCelsius(sensor2); /*?*/ - bad value, because JS will treat null as 0
+```
+
+Let's create monads for handling corect and uncorect values.
+
+```javascript
+
+const Just = (x)=> ({
+	map: (fn) => Just(fn(x)),
+	flatmap: (fn) => fn(x),
+	valuesOf: () => x,
+	inspect: () => `Just(${x})`,
+	type: "just"
+})
+
+const Nothing = ()=> ({
+	map: (fn) => Nothing(fn()),
+	flatmap: (fn) => fn(),
+	valuesOf: () => Nothing(),
+	inspect: () => `Nothing`,
+	type: "nothing"
+})
+
+const MaybeOf = (x) => (x === null || x === undefined || x.type === 'nothing' ? Nothing() : Just(x));
+
+const Maybe = {
+	of: MaybeOf,
+};
+ /*********************************/
+
+ const tem1C = Maybe.of(sensor1).map(fahrenheitToCelsios).inspect();
+ const tem1C = Maybe.of(sensor2).map(fahrenheitToCelsios).inspect();
+ ```
+
+ It's save even for chaining!
